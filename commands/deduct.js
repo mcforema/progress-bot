@@ -1,4 +1,6 @@
 const { db, Track } = require('../models');
+const Discord = require('discord.js');
+const canvas = require('../lib/draw_progress.js');
 
 async function execute(message, args) {
   const amount = parseInt(args[1]);
@@ -20,7 +22,10 @@ async function execute(message, args) {
 
   await track.save()
 
-  return message.reply(`\`${track.item}\`: Vas ${track.current_progress} de ${track.value}`);
+  let percentage = track.current_progress * 100 / track.value;
+  const attachment = new Discord.Attachment(await canvas.draw_progress(percentage), 'progress-banner.png');
+
+  return message.reply(`\`Item -> ${track.item}\`: Vas ${track.current_progress} de ${track.value} (${percentage}%)`, attachment);
 }
 
 module.exports = {
