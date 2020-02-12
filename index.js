@@ -1,29 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
-const Sequelize = require('sequelize');
 const { prefix, token } = require('./config.json');
-
-const sequelize = new Sequelize('database', 'user', 'password', {
-  host: 'localhost',
-  dialect: 'sqlite',
-  logging: false,
-  storage: 'database.sqlite',
-});
-
-const Tracks = sequelize.define('tracks', {
-  item: Sequelize.STRING,
-  username: Sequelize.STRING,
-  value: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  },
-  current_progress: {
-    type: Sequelize.INTEGER,
-    defaultValue: 0,
-    allowNull: false,
-  }
-});
+const { db, Track } = require('./models');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -39,7 +17,7 @@ const cooldowns = new Discord.Collection();
 
 client.once('ready', () => {
   console.log('Ready!');
-  Tracks.sync();
+  Track.sync();
 });
 
 client.on('message', message => {
@@ -48,10 +26,7 @@ client.on('message', message => {
   const args = message.content.slice(prefix.length).split(/ +/);
   const commandName = args.shift().toLowerCase();
 
-  if (!client.commands.has(commandName)) return;
-
-  const command = client.commands.get(commandName)
-    || client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName));
+  const command = client.commands.find(cmd => cmd.aliases && cmd.aliases.includes(commandName)) || client.commands.get(commandName) ;
 
   if (!command) return;
 

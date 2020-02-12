@@ -9,6 +9,7 @@
   "author": "Matt Hinczuk",
   "license": "ISC",
   "dependencies": {
+    "canvas": "^2.6.1",
     "discord.js": "^11.5.1",
     "eslint": "^6.8.0",
     "sequelize": "^5.21.4",
