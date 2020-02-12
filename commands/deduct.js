@@ -23,7 +23,7 @@ async function execute(message, args) {
 
   await track.save()
 
-  let percentage = track.current_progress * 100 / track.value;
+  let percentage = (track.current_progress * 100 / track.value).toFixed(2);
 
   return message.reply(await embed_creator(track.item, track.current_progress, track.value, percentage));
 }

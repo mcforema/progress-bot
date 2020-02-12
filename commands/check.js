@@ -10,7 +10,7 @@ async function execute(message, args) {
 
   if (!track) return message.reply('El track ingresado no existe.');
 
-  let percentage = track.current_progress * 100 / track.value;
+  let percentage = (track.current_progress * 100 / track.value).toFixed(2);
 
   return message.channel.send(
     await embed_creator(track.item, track.current_progress, track.value, percentage)
