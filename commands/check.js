@@ -1,6 +1,5 @@
 const { db, Track } = require('../models');
-const Discord = require('discord.js');
-const canvas = require('../lib/draw_progress.js');
+const { embed_creator } = require('../lib/embed_creator.js');
 
 async function execute(message, args) {
   const track = await Track.findOne({
@@ -13,17 +12,9 @@ async function execute(message, args) {
 
   let percentage = track.current_progress * 100 / track.value;
 
-  const attachment = new Discord.Attachment(await canvas.draw_progress(percentage), 'progress-banner.png');
-
-  const exampleEmbed = new Discord.RichEmbed()
-  .setColor('#0099ff')
-  .setTitle(`Item: ${track.item} ${percentage}%`)
-  .setDescription(`Vas ${track.current_progress} de ${track.value}`)
-  .attachFiles([attachment])
-  .setImage('attachment://progress-banner.png');
-
-  // return message.channel.send(`Trackeando \`${track.item}\`. Vas ${track.current_progress} de ${track.value}`, attachment);
-  return message.channel.send(exampleEmbed);
+  return message.channel.send(
+    await embed_creator(track.item, track.current_progress, track.value, percentage)
+  );
 }
 
 module.exports = {

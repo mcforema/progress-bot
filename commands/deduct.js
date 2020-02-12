@@ -1,11 +1,12 @@
-const { db, Track } = require('../models');
-const Discord = require('discord.js');
-const canvas = require('../lib/draw_progress.js');
+const { db, Track }     = require('../models');
+const { embed_creator } = require('../lib/embed_creator.js');
+const { parse_amount }  = require('../lib/parse_amount.js');
 
 async function execute(message, args) {
-  const amount = parseInt(args[1]);
+  const amount = parse_amount(args);
+
   if (isNaN(amount)) {
-    return message.reply('El valor a restar debe ser un numero. EJ: !restar kzarka 90000000');
+    return message.reply('El valor a restar debe ser un numero o su abreviacion. EJ: !restar kzarka 20kk');
   }
 
   const track = await Track.findOne({ where: { item_tag: `${args[0]}_${message.author.id}` } });
@@ -23,9 +24,8 @@ async function execute(message, args) {
   await track.save()
 
   let percentage = track.current_progress * 100 / track.value;
-  const attachment = new Discord.Attachment(await canvas.draw_progress(percentage), 'progress-banner.png');
 
-  return message.reply(`\`Item -> ${track.item}\`: Vas ${track.current_progress} de ${track.value} (${percentage}%)`, attachment);
+  return message.reply(await embed_creator(track.item, track.current_progress, track.value, percentage));
 }
 
 module.exports = {

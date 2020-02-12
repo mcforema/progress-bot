@@ -1,11 +1,12 @@
 const { db, Track } = require('../models');
-const Discord = require('discord.js');
-const canvas = require('../lib/draw_progress.js');
+const { embed_creator } = require('../lib/embed_creator.js');
+const { parse_amount }  = require('../lib/parse_amount.js');
 
 async function execute(message, args) {
-  const amount = parseInt(args[1]);
+  const amount = parse_amount(args);
+  
   if (isNaN(amount)) {
-    return message.reply('El valor a agregar debe ser un numero. EJ: !sumar kzarka 90000000');
+    return message.reply('El valor a agregar debe ser un numero o su abreviacion. EJ: !sumar kzarka 90kk');
   }
 
   const track = await Track.findOne({ where: { item_tag: `${args[0]}_${message.author.id}` } });
@@ -15,19 +16,18 @@ async function execute(message, args) {
   track.current_progress = parseInt(track.current_progress) + amount;
 
   let percentage = track.current_progress * 100 / track.value;
-  let success_message = `\`Item -> ${track.item}\`: Vas ${track.current_progress} de ${track.value} (${percentage}%)`
+
+  response_message = await embed_creator(track.item, track.current_progress, track.value, percentage);
 
   if (track.current_progress >= track.value) {
     track.current_progress = track.value;
     percentage = 100
-    success_message = `:tada: Felicidades! concretaste la meta para \`${track.item}\`! Tienes ${track.current_progress}`
+    response_message = `:tada: Felicidades! concretaste la meta para \`${track.item}\`! Tienes ${track.current_progress}`
   }
 
   await track.save()
   
-  const attachment = new Discord.Attachment(await canvas.draw_progress(percentage), 'progress-banner.png');
-
-  return message.reply(success_message, attachment);
+  return message.reply(response_message);
 }
 
 module.exports = {
