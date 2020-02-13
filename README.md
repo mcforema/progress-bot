@@ -10,9 +10,9 @@ A simple bot to track progress towards numeric goals. Just use `!track <item> <v
 
 # How to install and run
 
-Create a new application at https://discordapp.com/developers/applications/ and then turn it into a bot application.
+Create a new application at https://discordapp.com/developers/applications/ and then turn it into a bot application. From the bot section you will be able to pull your bot token:
 
-Take your bot token from the discord page and change it at config.json in your project folder.
+Create a `config.json` file (theres an example of it with the extension .example in the project), then add your bot token there.
 
 After that, just run the app with `node index.js` and you should be good to go!
 
