@@ -1,7 +1,7 @@
 const fs = require('fs');
 const Discord = require('discord.js');
 const { prefix, token } = require('./config.json');
-const { db, Track } = require('./models');
+const { db, Track, User, Plan } = require('./models');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
@@ -18,6 +18,8 @@ const cooldowns = new Discord.Collection();
 client.once('ready', () => {
   console.log('Ready!');
   Track.sync();
+  User.sync();
+  Plan.sync();
 });
 
 client.on('message', message => {

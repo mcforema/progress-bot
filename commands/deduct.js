@@ -3,7 +3,7 @@ const { embed_creator } = require('../lib/embed_creator.js');
 const { parse_amount }  = require('../lib/parse_amount.js');
 
 async function execute(message, args) {
-  const amount = parse_amount(args);
+  const amount = parse_amount(args[1]);
 
   if (isNaN(amount)) {
     return message.reply('El valor a restar debe ser un numero o su abreviacion. EJ: !restar kzarka 20kk');
